@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Notas - Matthew</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Partículas flotantes */
+        .particle {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float 20s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0) rotate(0deg); }
+            25% { transform: translateY(-100px) translateX(100px) rotate(90deg); }
+            50% { transform: translateY(-200px) translateX(-100px) rotate(180deg); }
+            75% { transform: translateY(-100px) translateX(-150px) rotate(270deg); }
+        }
+
+        .particle:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 80%; top: 60%; animation-delay: 3s; }
+        .particle:nth-child(3) { left: 50%; top: 80%; animation-delay: 6s; }
+        .particle:nth-child(4) { left: 30%; top: 50%; animation-delay: 9s; }
+        .particle:nth-child(5) { left: 70%; top: 30%; animation-delay: 12s; }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 45px;
+            border-radius: 30px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.3), 
+                        0 0 0 1px rgba(255,255,255,0.2) inset;
+            max-width: 550px;
+            width: 100%;
+            animation: containerPulse 3s ease-in-out infinite;
+            position: relative;
+            z-index: 10;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes containerPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 25px 80px rgba(0,0,0,0.3); }
+            50% { transform: scale(1.02); box-shadow: 0 30px 100px rgba(0,0,0,0.4); }
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 38px;
+            margin-bottom: 15px;
+            text-shadow: 3px 3px 10px rgba(0,0,0,0.3);
+            animation: titleGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { text-shadow: 3px 3px 10px rgba(0,0,0,0.3), 0 0 20px rgba(255,255,255,0.5); }
+            50% { text-shadow: 3px 3px 10px rgba(0,0,0,0.3), 0 0 40px rgba(255,255,255,0.8); }
+        }
+
+        .author {
+            background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.1) 100%);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            display: inline-block;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            animation: authorBounce 2s ease-in-out infinite;
+        }
+
+        @keyframes authorBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .input-group {
+            margin-bottom: 22px;
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+
+        .input-group:nth-child(1) { animation-delay: 0.1s; }
+        .input-group:nth-child(2) { animation-delay: 0.2s; }
+        .input-group:nth-child(3) { animation-delay: 0.3s; }
+        .input-group:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: white;
+            font-size: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+        
+        input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            font-size: 17px;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-weight: 600;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #fff;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.3), 0 8px 25px rgba(0,0,0,0.2);
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        input:hover {
+            border-color: rgba(255, 255, 255, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        button {
+            width: 100%;
+            padding: 18px;
+            margin-top: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-size: 200% 200%;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.5);
+            animation: buttonShine 3s ease-in-out infinite, fadeInUp 0.6s ease-out 0.5s backwards;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes buttonShine {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.7);
+            animation: buttonShine 1s ease-in-out infinite;
+        }
+
+        button:active {
+            transform: translateY(-2px) scale(1.03);
+        }
+        
+        #resultado {
+            margin-top: 30px;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            font-size: 17px;
+            display: none;
+        }
+
+        #resultado.show {
+            display: block;
+            animation: resultExplosion 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes resultExplosion {
+            0% {
+                opacity: 0;
+                transform: scale(0.5) rotate(-10deg);
+            }
+            50% {
+                transform: scale(1.1) rotate(5deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        #resultado h3 {
+            margin-bottom: 18px;
+            font-size: 26px;
+            animation: textBounce 0.6s ease-out 0.3s;
+        }
+
+        #resultado p {
+            margin: 12px 0;
+            font-size: 19px;
+            animation: textBounce 0.6s ease-out 0.5s;
+        }
+
+        @keyframes textBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .aprobado {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            border: 3px solid #38ef7d;
+            box-shadow: 0 15px 50px rgba(56, 239, 125, 0.5), 0 0 30px rgba(56, 239, 125, 0.3);
+        }
+        
+        .desaprobado {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+            color: white;
+            border: 3px solid #f45c43;
+            box-shadow: 0 15px 50px rgba(235, 51, 73, 0.5), 0 0 30px rgba(235, 51, 73, 0.3);
+        }
+
+        .emoji {
+            font-size: 70px;
+            margin-bottom: 15px;
+            animation: emojiSpin 1s ease-out;
+            display: inline-block;
+        }
+
+        @keyframes emojiSpin {
+            0% {
+                transform: scale(0) rotate(0deg);
+            }
+            50% {
+                transform: scale(1.3) rotate(180deg);
+            }
+            100% {
+                transform: scale(1) rotate(360deg);
+            }
+        }
+
+        /* Efectos de confeti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f0f;
+            position: absolute;
+            animation: confettiFall 3s linear;
+            z-index: 100;
+        }
+
+        @keyframes confettiFall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .star {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            animation: starTwinkle 2s ease-in-out infinite;
+        }
+
+        @keyframes starTwinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+
+        .star:nth-child(6) { left: 15%; top: 15%; animation-delay: 0s; }
+        .star:nth-child(7) { left: 85%; top: 25%; animation-delay: 0.5s; }
+        .star:nth-child(8) { left: 25%; top: 75%; animation-delay: 1s; }
+        .star:nth-child(9) { left: 75%; top: 85%; animation-delay: 1.5s; }
+        .star:nth-child(10) { left: 50%; top: 10%; animation-delay: 2s; }
+    </style>
+</head>
+<body>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1>📊 Calculadora de Notas</h1>
+            <div class="author">👨‍💻 Creado por Matthew</div>
+            <p class="subtitle">✨ Ingresa tus 4 notas del bimestre ✨</p>
+        </div>
+        
+        <div class="input-group">
+            <label for="nota1">📝 Nota 1:</label>
+            <input type="number" id="nota1" min="0" max="20" placeholder="0 - 20" step="0.01">
+        </div>
+        
+        <div class="input-group">
+            <label for="nota2">📝 Nota 2:</label>
+            <input type="number" id="nota2" min="0" max="20" placeholder="0 - 20" step="0.01">
+        </div>
+        
+        <div class="input-group">
+            <label for="nota3">📝 Nota 3:</label>
+            <input type="number" id="nota3" min="0" max="20" placeholder="0 - 20" step="0.01">
+        </div>
+        
+        <div class="input-group">
+            <label for="nota4">📝 Nota 4:</label>
+            <input type="number" id="nota4" min="0" max="20" placeholder="0 - 20" step="0.01">
+        </div>
+        
+        <button onclick="calcularPromedio()">🧮 Calcular Promedio</button>
+        
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        function crearConfeti() {
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.top = '-10px';
+                    confetti.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                    confetti.style.width = Math.random() * 10 + 5 + 'px';
+                    confetti.style.height = confetti.style.width;
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 30);
+            }
+        }
+
+        function calcularPromedio() {
+            const nota1 = parseFloat(document.getElementById('nota1').value);
+            const nota2 = parseFloat(document.getElementById('nota2').value);
+            const nota3 = parseFloat(document.getElementById('nota3').value);
+            const nota4 = parseFloat(document.getElementById('nota4').value);
+            
+            if (isNaN(nota1) || isNaN(nota2) || isNaN(nota3) || isNaN(nota4)) {
+                alert('⚠️ Por favor ingresa todas las notas');
+                return;
+            }
+            
+            if (nota1 < 0 || nota1 > 20 || nota2 < 0 || nota2 > 20 || 
+                nota3 < 0 || nota3 > 20 || nota4 < 0 || nota4 > 20) {
+                alert('⚠️ Las notas deben estar entre 0 y 20');
+                return;
+            }
+            
+            const promedio = (nota1 + nota2 + nota3 + nota4) / 4;
+            const promedioRedondeado = promedio.toFixed(2);
+            
+            let estado, clase, emoji;
+            
+            if (promedio >= 13) {
+                estado = '¡APROBADO!';
+                clase = 'aprobado';
+                emoji = '🎉';
+                crearConfeti();
+            } else {
+                estado = 'DESAPROBADO';
+                clase = 'desaprobado';
+                emoji = '😔';
+            }
+            
+            const divResultado = document.getElementById('resultado');
+            divResultado.className = clase + ' show';
+            divResultado.innerHTML = 
+                '<div class="emoji">' + emoji + '</div>' +
+                '<h3>✨ Resultados ✨</h3>' +
+                '<p>📊 Promedio Final: <strong>' + promedioRedondeado + '</strong></p>' +
+                '<p>🎯 Estado: <strong>' + estado + '</strong></p>';
+        }
+
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    calcularPromedio();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
